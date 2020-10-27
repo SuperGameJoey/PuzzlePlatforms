@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "MainMenu.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
-#include "MainMenu.h"
 
 
 bool UMainMenu::Initialize()
@@ -23,48 +23,10 @@ bool UMainMenu::Initialize()
 	if (!ensure(ConnectButton != nullptr)) return false;
 	ConnectButton->OnClicked.AddDynamic(this, &UMainMenu::OnConnectClicked);
 
+	if (!ensure(QuitButton != nullptr)) return false;
+	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::OnQuitClicked);
+
 	return true;
-}
-
-void UMainMenu::Setup()
-{
-	this->bIsFocusable = true;
-	this->AddToViewport();
-
-	UWorld* World = GetWorld();
-
-	if (!ensure(World != nullptr)) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-
-	FInputModeUIOnly InputModeData;
-	InputModeData.SetWidgetToFocus(this->TakeWidget());
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	PlayerController->SetInputMode(InputModeData);
-	PlayerController->bShowMouseCursor = true;
-
-}
-
-// Would be better to use UUSerWidget::OnLevelRemovedFromWorld instead of this
-void UMainMenu::Teardown()
-{
-	this->RemoveFromViewport();
-
-	UWorld* World = GetWorld();
-	if (!ensure(World != nullptr)) return;
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-
-	FInputModeGameOnly InputModeData;
-	PlayerController->SetInputMode(InputModeData);
-	PlayerController->bShowMouseCursor = false;
-}
-
-void UMainMenu::SetMenuInterface(IMenuInterface* MMenuInterface)
-{
-	this->MenuInterface = MMenuInterface;
 }
 
 void UMainMenu::OnHostClicked()
@@ -94,5 +56,13 @@ void UMainMenu::OnConnectClicked()
 	if (MenuInterface != nullptr && IPAddressField != nullptr)
 	{
 		MenuInterface->Join(IPAddressField->GetText().ToString());
+	}
+}
+
+void UMainMenu::OnQuitClicked()
+{
+	if (MenuInterface != nullptr && IPAddressField != nullptr)
+	{
+		MenuInterface->QuitGame();
 	}
 }

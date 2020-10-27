@@ -24,4 +24,6 @@ class PUZZLEPLATFORMS_API IMenuInterface
 public:
 	virtual void Host() = 0; // = 0 makes this a pure virtual function and does not have an implementation, because C++ requires one
 	virtual void Join(const FString& Address) = 0;
+	virtual void LoadMainMenu() = 0;
+	virtual void QuitGame() = 0;
 };
