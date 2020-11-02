@@ -1,10 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MainMenu.h"
+#include "JoinServerListItem.h"
+
+#include "UObject/ConstructorHelpers.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
+#include "Components/PanelWidget.h"
+#include "Components/TextBlock.h"
 
+UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> ServerItemBPClass(TEXT("/Game/MenuSystem/WBP_ServerListItem"));
+	if (!ensure(ServerItemBPClass.Class != nullptr)) return;
+	ServerItemClass = ServerItemBPClass.Class;
+}
 
 bool UMainMenu::Initialize()
 {
@@ -37,11 +48,45 @@ void UMainMenu::OnHostClicked()
 	}
 }
 
+void UMainMenu::AddServerEntries(TArray<FString> ServerNames)
+{
+	if (!ensure(ServerItemClass != nullptr)) return;
+	if (!ensure(ServerScrollBox != nullptr)) return;
+
+	UWorld* World = this->GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	ServerScrollBox->ClearChildren();
+
+	uint32 i = 0;
+
+	for (const FString& ServerName : ServerNames)
+	{
+		UJoinServerListItem* NewItem = CreateWidget<UJoinServerListItem>(World, ServerItemClass);
+		if (!ensure(NewItem != nullptr)) return;
+
+		ServerScrollBox->AddChild(NewItem);
+		NewItem->ServerName->SetText(FText::FromString(ServerName));
+		NewItem->Setup(this, i);
+		++i;
+	}
+}
+
+void UMainMenu::SelectIndex(uint32 Index)
+{
+	SelectedIndex = Index;
+}
+
 void UMainMenu::OnJoinClicked()
 {
 	if (!ensure(MenuSwitcher != nullptr)) return;
 	if (!ensure(JoinMenu != nullptr)) return;
 	MenuSwitcher->SetActiveWidget(JoinMenu);
+
+	if (MenuInterface != nullptr)
+	{
+		MenuInterface->FindSessions();
+	}
 }
 
 void UMainMenu::OnCancelClicked()
@@ -53,15 +98,25 @@ void UMainMenu::OnCancelClicked()
 
 void UMainMenu::OnConnectClicked()
 {
-	if (MenuInterface != nullptr && IPAddressField != nullptr)
+	if (SelectedIndex.IsSet())
 	{
-		MenuInterface->Join(IPAddressField->GetText().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Selected index %d"), SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected index is not set"));
+	}
+
+	if (MenuInterface != nullptr && SelectedIndex.IsSet())
+	{
+		MenuInterface->Join(SelectedIndex.GetValue());
+		return;
 	}
 }
 
 void UMainMenu::OnQuitClicked()
 {
-	if (MenuInterface != nullptr && IPAddressField != nullptr)
+	if (MenuInterface != nullptr)
 	{
 		MenuInterface->QuitGame();
 	}
