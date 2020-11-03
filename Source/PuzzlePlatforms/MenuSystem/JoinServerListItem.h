@@ -13,6 +13,10 @@ UCLASS()
 class PUZZLEPLATFORMS_API UJoinServerListItem : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	bool Selected = false;
 	
 private:
 

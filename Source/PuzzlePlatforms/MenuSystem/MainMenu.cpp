@@ -75,6 +75,19 @@ void UMainMenu::AddServerEntries(TArray<FString> ServerNames)
 void UMainMenu::SelectIndex(uint32 Index)
 {
 	SelectedIndex = Index;
+	UpdateChildren();
+}
+
+void UMainMenu::UpdateChildren()
+{
+	for (int32 i = 0; i < ServerScrollBox->GetChildrenCount(); ++i)
+	{
+		UJoinServerListItem* Row = Cast<UJoinServerListItem>(ServerScrollBox->GetChildAt(i));
+		if (Row != nullptr)
+		{
+			Row->Selected = SelectedIndex.IsSet() && (SelectedIndex.GetValue() == i);
+		}
+	}
 }
 
 void UMainMenu::OnJoinClicked()

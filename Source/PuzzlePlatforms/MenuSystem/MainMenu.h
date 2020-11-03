@@ -70,4 +70,6 @@ private:
 	void OnQuitClicked();
 
 	TOptional<uint32> SelectedIndex;
+
+	void UpdateChildren();
 };
