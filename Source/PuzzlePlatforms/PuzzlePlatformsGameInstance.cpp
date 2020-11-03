@@ -86,6 +86,7 @@ void UPuzzlePlatformsGameInstance::FindSessions()
 	if (SessionSearch.IsValid())
 	{
 		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->MaxSearchResults = 100;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Looking for sessions to join"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
