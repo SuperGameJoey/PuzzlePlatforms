@@ -48,7 +48,7 @@ void UMainMenu::OnHostClicked()
 	}
 }
 
-void UMainMenu::AddServerEntries(TArray<FString> ServerNames)
+void UMainMenu::AddServerEntries(TArray<FServerData> ServerDatas)
 {
 	if (!ensure(ServerItemClass != nullptr)) return;
 	if (!ensure(ServerScrollBox != nullptr)) return;
@@ -60,13 +60,14 @@ void UMainMenu::AddServerEntries(TArray<FString> ServerNames)
 
 	uint32 i = 0;
 
-	for (const FString& ServerName : ServerNames)
+	for (const FServerData& ServerData : ServerDatas)
 	{
 		UJoinServerListItem* NewItem = CreateWidget<UJoinServerListItem>(World, ServerItemClass);
 		if (!ensure(NewItem != nullptr)) return;
 
 		ServerScrollBox->AddChild(NewItem);
-		NewItem->ServerName->SetText(FText::FromString(ServerName));
+		NewItem->ServerName->SetText(FText::FromString(ServerData.Name.Left(8) + "(" + ServerData.HostUsername.Left(16) + ")"));
+		NewItem->PlayerCount->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
 		NewItem->Setup(this, i);
 		++i;
 	}

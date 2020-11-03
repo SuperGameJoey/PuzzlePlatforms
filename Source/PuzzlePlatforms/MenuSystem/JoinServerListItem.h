@@ -30,6 +30,9 @@ public:
 	class UTextBlock* ServerName;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* PlayerCount;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* SelectButton;
 
 	void Setup(class UMainMenu* Parent, uint32 Index);
