@@ -30,6 +30,9 @@ public:
 	class UTextBlock* ServerName;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* HostName;
+
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* PlayerCount;
 
 	UPROPERTY(meta = (BindWidget))

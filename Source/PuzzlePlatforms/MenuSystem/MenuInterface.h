@@ -22,7 +22,7 @@ class PUZZLEPLATFORMS_API IMenuInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Host() = 0; // = 0 makes this a pure virtual function and does not have an implementation, because C++ requires one
+	virtual void Host(FString ServerName) = 0; // = 0 makes this a pure virtual function and does not have an implementation, because C++ requires one
 	virtual void Join(uint32 Index) = 0;
 	virtual void LoadMainMenu() = 0;
 	virtual void QuitGame() = 0;

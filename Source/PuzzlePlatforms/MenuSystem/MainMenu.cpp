@@ -37,14 +37,27 @@ bool UMainMenu::Initialize()
 	if (!ensure(QuitButton != nullptr)) return false;
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::OnQuitClicked);
 
+	if (!ensure(HostConfirmButton != nullptr)) return false;
+	HostConfirmButton->OnClicked.AddDynamic(this, &UMainMenu::OnHostConfirmClicked);
+
+	if (!ensure(HostCancelButton != nullptr)) return false;
+	HostCancelButton->OnClicked.AddDynamic(this, &UMainMenu::OnCancelClicked);
+
 	return true;
 }
 
 void UMainMenu::OnHostClicked()
 {
-	if (MenuInterface != nullptr)
+	if (!ensure(MenuSwitcher != nullptr)) return;
+	if (!ensure(HostMenu != nullptr)) return;
+	MenuSwitcher->SetActiveWidget(HostMenu);
+}
+
+void UMainMenu::OnHostConfirmClicked()
+{
+	if (MenuInterface != nullptr && ServerNameTextBox != nullptr)
 	{
-		MenuInterface->Host();
+		MenuInterface->Host(ServerNameTextBox->Text.ToString());
 	}
 }
 
@@ -66,7 +79,8 @@ void UMainMenu::AddServerEntries(TArray<FServerData> ServerDatas)
 		if (!ensure(NewItem != nullptr)) return;
 
 		ServerScrollBox->AddChild(NewItem);
-		NewItem->ServerName->SetText(FText::FromString(ServerData.Name.Left(8) + "(" + ServerData.HostUsername.Left(16) + ")"));
+		NewItem->ServerName->SetText(FText::FromString(ServerData.Name));
+		NewItem->HostName->SetText(FText::FromString(ServerData.HostUsername));
 		NewItem->PlayerCount->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayers, ServerData.MaxPlayers)));
 		NewItem->Setup(this, i);
 		++i;
